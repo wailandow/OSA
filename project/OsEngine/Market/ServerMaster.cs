@@ -1313,6 +1313,11 @@ namespace OsEngine.Market
         GateIoFutures,
 
         /// <summary>
+        /// QSH
+        /// </summary>
+        QSH,
+
+        /// <summary>
         /// cryptocurrency exchange ZB
         /// биржа криптовалют ZB
         /// </summary>

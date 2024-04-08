@@ -92,6 +92,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Vendors\Jayrock.Json.dll</HintPath>
     </Reference>
+    <Reference Include="LiteDB, Version=5.0.19.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.5.0.19\lib\net45\LiteDB.dll</HintPath>
+    </Reference>
     <Reference Include="LmaxClientLibrary, Version=1.9.0.2, Culture=neutral, PublicKeyToken=f45712b013135aca, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Vendors\LmaxClientLibrary.dll</HintPath>
@@ -1301,6 +1304,23 @@
     <Compile Include="Robots\Patterns\ThreeSoldier.cs" />
     <Compile Include="Robots\MarketMaker\TwoLegArbitrage.cs" />
     <Compile Include="Robots\CounterTrend\WilliamsRangeTrade.cs" />
+    <Compile Include="Robots\YaRobots\HandyBot.cs" />
+    <Compile Include="Robots\YaRobots\MachineVision.cs" />
+    <Compile Include="Robots\YaRobots\MoexIssBot.cs" />
+    <Compile Include="Robots\YaRobots\NakedVwap.cs" />
+    <Compile Include="Robots\YaRobots\PostgreSqlMOEX2.cs" />
+    <Compile Include="Robots\YaRobots\SaxBot.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerBetMrkt.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerHpat.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerHpatHour.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerHpatResearch.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerVolumer.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerVWAP.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerVWAP_bak.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerVWAP_bak_1701.cs" />
+    <Compile Include="Robots\YaRobots\SqliteBot.cs" />
+    <Compile Include="Robots\YaRobots\SqliteBotRepo.cs" />
+    <Compile Include="Robots\YaRobots\SqliteIMOEX2.cs" />
     <Page Include="Alerts\AlertMessageFullUi.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
