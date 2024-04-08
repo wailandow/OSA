@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\NUnit.4.1.0\build\NUnit.props" Condition="Exists('..\packages\NUnit.4.1.0\build\NUnit.props')" />
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -67,6 +69,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Vendors\cgate_net64.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.25.3.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.25.3\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
@@ -92,9 +100,30 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Vendors\LmaxClientLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.HashCode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.HashCode.1.1.1\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Npgsql, Version=8.0.2.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.8.0.2\lib\netstandard2.0\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=4.0.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.4.1.0\lib\net462\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework.legacy, Version=4.0.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.4.1.0\lib\net462\nunit.framework.legacy.dll</HintPath>
     </Reference>
     <Reference Include="protobuf-net, Version=2.4.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -120,8 +149,24 @@
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.Collections.Immutable, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.8.0.0\lib\net462\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.SQLite, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.118.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.118.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.8.0.0\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
@@ -137,6 +182,21 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization">
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.8.0.0\lib\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Channels, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Channels.8.0.0\lib\net462\System.Threading.Channels.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -166,6 +226,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddonsMy\MoexIss.cs" />
+    <Compile Include="AddonsMy\MyFunctions.cs" />
+    <Compile Include="AddonsMy\SX\DataFormat.cs" />
+    <Compile Include="AddonsMy\SX\Globals.cs" />
+    <Compile Include="AddonsMy\SX\Sax.cs" />
+    <Compile Include="AddonsMy\SX\SaxDataRep.cs" />
+    <Compile Include="AddonsMy\SX\SaxOptions.cs" />
+    <Compile Include="AddonsMy\SX\Util.cs" />
     <Compile Include="Alerts\AlertMessageManager.cs" />
     <Compile Include="Alerts\AlertMessageFullUi.xaml.cs">
       <DependentUpon>AlertMessageFullUi.xaml</DependentUpon>
@@ -416,6 +484,7 @@
     <Compile Include="Entity\ProxyHolderAddUi.xaml.cs">
       <DependentUpon>ProxyHolderAddUi.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Indicators\SuperChannel.cs" />
     <Compile Include="Market\Servers\AServerOrdersHub.cs" />
     <Compile Include="Market\Servers\AstsBridge\SecurityLevelOne.cs" />
     <Compile Include="Entity\StartProgramm.cs" />
@@ -796,6 +865,41 @@
     <Compile Include="Market\Servers\Plaza\Internal\PlazaClient.cs" />
     <Compile Include="Market\Servers\Plaza\Internal\PlazaMarketDepthCreator.cs" />
     <Compile Include="Market\Servers\Plaza\PlazaServer.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\DataTypes.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Internals\DateTimeHelper.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Internals\Flags.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Internals\Leb128.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Internals\QshFile.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Internals\StreamType.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Internals\ULeb128.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\RawQuotes.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\IQshStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\QshReader.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\AuxInfoStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\DataReader.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\DealsStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\MessagesStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\OrdLogStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\OwnOrdersStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\OwnTradesStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\QshReaderImpl.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\QshStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Reader\V4\QuotesStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Security.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Writer\AuxInfoStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Writer\DataWriter.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Writer\DealsStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Writer\MessagesStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Writer\OrdLogStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Writer\OwnOrdersStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Writer\OwnTradesStream.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Writer\QshWriter.cs" />
+    <Compile Include="Market\Servers\QSH\QScalp\Writer\QuotesStream.cs" />
+    <Compile Include="Market\Servers\QSH\QshClient.cs" />
+    <Compile Include="Market\Servers\QSH\QshServer.cs" />
+    <Compile Include="Market\Servers\QSH\QshServerUi.xaml.cs">
+      <DependentUpon>QshServerUi.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Market\Servers\QuikLua\QuikLuaServer.cs" />
     <Compile Include="Market\ServerMasterPortfoliosPainter.cs" />
     <Compile Include="Market\Servers\ServerCandleStorage.cs" />
@@ -1489,6 +1593,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Market\Servers\QSH\QshServerUi.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Market\Servers\Tester\GoToUi.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1805,6 +1913,14 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\clr.bat" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console-x86.exe.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console.exe.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-x86.exe.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.exe.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\NUnitTests.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\NUnitTests.nunit" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\runFile.exe.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -1910,6 +2026,48 @@
     <Resource Include="Images\MainWIndow\alor1.png" />
     <Resource Include="Images\MainWIndow\alor2.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\Failure.jpg" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\fit.dll" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\Ignored.jpg" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\mock-assembly.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nonamespace-assembly.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\notestfixtures-assembly.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console-runner.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console-x86.exe" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console.exe" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-gui-runner.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-gui.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-x86.exe" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.core.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.core.extensions.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.core.interfaces.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.core.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.exe" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.extensions.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.fixtures.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.fixtures.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.framework.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.framework.extensions.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.framework.tests.dll" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.framework.xml" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.mocks.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.mocks.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.uikit.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.uikit.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.util.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.util.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\NUnitFitTests.html" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\runFile.exe" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\Success.jpg" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\test-assembly.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\test-utilities.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\timing-tests.dll" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\fit-license.txt" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\license.txt" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\Logo.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Grpc.Core.2.46.6\build\net45\Grpc.Core.targets" Condition="Exists('..\packages\Grpc.Core.2.46.6\build\net45\Grpc.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -1917,7 +2075,13 @@
       <ErrorText>Данный проект ссылается на пакеты NuGet, отсутствующие на этом компьютере. Используйте восстановление пакетов NuGet, чтобы скачать их.  Дополнительную информацию см. по адресу: http://go.microsoft.com/fwlink/?LinkID=322105. Отсутствует следующий файл: {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Grpc.Core.2.46.6\build\net45\Grpc.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Grpc.Core.2.46.6\build\net45\Grpc.Core.targets'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\NUnit.4.1.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NUnit.4.1.0\build\NUnit.props'))" />
   </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

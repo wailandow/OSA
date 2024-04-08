@@ -295,3 +295,6 @@ __pycache__/
 /project/OsEngine/Robots/YaRobots
 /project/OsEngine/bin/Debug/DataMy
 /project/OsEngine/Robots/YaRobots_old
+/project/OsEngine/bin/Debug/System.ValueTuple.dll
+/.gitignore
+/.gitignore
