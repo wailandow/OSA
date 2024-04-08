@@ -288,3 +288,10 @@ __pycache__/
 # tools/**
 # !tools/packages.config
 /project/OsEngine/AddonsMy
+/project/OsEngine/Indicators/SuperChannel.cs
+/project/OsEngine/Market/Servers/QSH/QshClient.cs
+/project/OsEngine/Market/Servers/QSH/QshServer.cs
+/project/OsEngine/Market/Servers/QSH/QshServerUi.xaml
+/project/OsEngine/Market/Servers/QSH/QScalp
+/project/OsEngine/bin/Debug/DataMy/sqlSelectToOsa.sql
+/project/OsEngine/Market/Servers/QSH
