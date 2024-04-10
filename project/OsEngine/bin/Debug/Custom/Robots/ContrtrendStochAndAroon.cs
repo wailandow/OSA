@@ -1,36 +1,30 @@
-﻿using OsEngine.Entity;
+﻿using System;
+using System.Collections.Generic;
+using OsEngine.Entity;
 using OsEngine.Indicators;
 using OsEngine.OsTrader.Panels;
 using OsEngine.OsTrader.Panels.Attributes;
 using OsEngine.OsTrader.Panels.Tab;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 
 /* Description
 trading robot for osengine
 
-The trend robot on Stochastic And CCI.
+The contrtrend robot on Stochastic And Aroon.
 
-Buy:
-1. The CCI line is in the range between levels 100 and -100, and is directed upwards.
-2. Stochastic crosses level 20 from bottom to top.
+Buy: When the Aroon Up line is above 70 and Stochastic has left the oversold zone (above 30).
 
-Sell:
-1. The CCI line is in the range between levels 100 and -100, and is directed downwards.
-2. Stochastic crosses the level 80 from top to bottom.
+Sell: When the Aroon Down line is above 70 and Stochastic has left the overbought zone (below 80).
 
-Buy exit: trailing stop in % of the line of the candle on which you entered.
+Buy exit: When the Aroon Up line is below 60.
 
-Sell ​​exit: trailing stop in % of the high of the candle where you entered.
+Sell ​​exit: When the Aroon Down line is below 60.
  
  */
 
-
-namespace OsEngine.Robots.AO
+namespace OsEngine.Robots.MyBots
 {
-    [Bot("TraderStohAndCCI")] // We create an attribute so that we don't write anything to the BotFactory
-    public class TraderStohAndCCI : BotPanel
+    [Bot("ContrtrendStochAndAroon")] // We create an attribute so that we don't write anything to the BotFactory
+    internal class ContrtrendStochAndAroon : BotPanel
     {
         private BotTabSimple _tab;
 
@@ -43,27 +37,16 @@ namespace OsEngine.Robots.AO
         private StrategyParameterTimeOfDay EndTradeTime;
 
         // Indicator setting 
-        private StrategyParameterInt PeriodCCI;
+        private StrategyParameterInt AroonLength;
         private StrategyParameterInt StochPeriod1;
         private StrategyParameterInt StochPeriod2;
         private StrategyParameterInt StochPeriod3;
 
         // Indicator
-        Aindicator _CCI;
+        Aindicator _Aroon;
         Aindicator _Stoh;
 
-        // The last value of the indicator
-        private decimal _lastCCI;
-        private decimal _lastStoh;
-
-        // The prev value of the indicator
-        private decimal _prevCCI;
-        private decimal _prevStoh;
-
-        // Exit
-        private StrategyParameterDecimal TrailingValue;
-
-        public TraderStohAndCCI(string name, StartProgram startProgram) : base(name, startProgram)
+        public ContrtrendStochAndAroon(string name, StartProgram startProgram) : base(name, startProgram)
         {
             TabCreate(BotTabType.Simple);
             _tab = TabsSimple[0];
@@ -76,51 +59,45 @@ namespace OsEngine.Robots.AO
             StartTradeTime = CreateParameterTimeOfDay("Start Trade Time", 0, 0, 0, 0, "Base");
             EndTradeTime = CreateParameterTimeOfDay("End Trade Time", 24, 0, 0, 0, "Base");
 
-            PeriodCCI = CreateParameter("Period CCI", 21, 10, 300, 10, "Indicator");
-            StochPeriod1 = CreateParameter("Stoch Period 1", 5, 3, 40, 1, "Indicator");
-            StochPeriod2 = CreateParameter("Stoch Period 2", 3, 2, 40, 1, "Indicator");
+            AroonLength = CreateParameter("Aroon Length", 14, 1, 200, 1, "Indicator");
+            StochPeriod1 = CreateParameter("Stoch Period 1", 9, 3, 40, 1, "Indicator");
+            StochPeriod2 = CreateParameter("Stoch Period 2", 5, 2, 40, 1, "Indicator");
             StochPeriod3 = CreateParameter("Stoch Period 3", 3, 2, 40, 1, "Indicator");
 
-            // Create indicator CCI
-            _CCI = IndicatorsFactory.CreateIndicatorByName("CCI", name + "CCI", false);
-            _CCI = (Aindicator)_tab.CreateCandleIndicator(_CCI, "NewArea");
-            ((IndicatorParameterInt)_CCI.Parameters[0]).ValueInt = PeriodCCI.ValueInt;
-            _CCI.DataSeries[0].Color = Color.GreenYellow;
-            _CCI.Save();
+            // Create indicator Aroon
+            _Aroon = IndicatorsFactory.CreateIndicatorByName("Aroon", name + "Aroon", false);
+            _Aroon = (Aindicator)_tab.CreateCandleIndicator(_Aroon, "AroonArea");
+            ((IndicatorParameterInt)_Aroon.Parameters[0]).ValueInt = AroonLength.ValueInt;
+            _Aroon.Save();
 
             // Create indicator Stoh
-            _Stoh = IndicatorsFactory.CreateIndicatorByName("Stochastic", name + "Stoh", false);
-            _Stoh = (Aindicator)_tab.CreateCandleIndicator(_Stoh, "NewArea0");
+            _Stoh = IndicatorsFactory.CreateIndicatorByName("Stochastic", name + "Stoch", false);
+            _Stoh = (Aindicator)_tab.CreateCandleIndicator(_Stoh, "StochArea");
             ((IndicatorParameterInt)_Stoh.Parameters[0]).ValueInt = StochPeriod1.ValueInt;
             ((IndicatorParameterInt)_Stoh.Parameters[1]).ValueInt = StochPeriod2.ValueInt;
             ((IndicatorParameterInt)_Stoh.Parameters[2]).ValueInt = StochPeriod3.ValueInt;
             _Stoh.Save();
 
-            // Exit
-            TrailingValue = CreateParameter("Stop Value", 1.0m, 5, 200, 5, "Exit");
-
             // Subscribe to the indicator update event
-            ParametrsChangeByUser += TraderStohAndCCI_ParametrsChangeByUser; ;
+            ParametrsChangeByUser += ContrtrendStochAndAroon_ParametrsChangeByUser;
 
             // Subscribe to the candle finished event
             _tab.CandleFinishedEvent += _tab_CandleFinishedEvent;
 
-            Description = "The trend robot on Stochastic And CCI. " +
-                "Buy: " +
-                "1. The CCI line is in the range between levels 100 and -100, and is directed upwards. " +
-                "2. Stochastic crosses level 20 from bottom to top. " +
-                "Sell: " +
-                "1. The CCI line is in the range between levels 100 and -100, and is directed downwards. " +
-                "2. Stochastic crosses the level 80 from top to bottom. " +
-                "Buy exit: trailing stop in % of the line of the candle on which you entered. " +
-                "Sell ​​exit: trailing stop in % of the high of the candle where you entered.";
-        }
+            Description = "The contrtrend robot on Stochastic And Aroon." +
+                "Buy: When the Aroon Up line is above 70 and Stochastic has left the oversold zone (above 30). " +
+                "Sell: When the Aroon Down line is above 70 and Stochastic has left the overbought zone (below 80). " +
+                "Buy exit: When the Aroon Up line is below 60." +
+                "Sell ​​exit: When the Aroon Down line is below 60.";
 
-        private void TraderStohAndCCI_ParametrsChangeByUser()
+        }   
+
+        private void ContrtrendStochAndAroon_ParametrsChangeByUser()
         {
-            ((IndicatorParameterInt)_CCI.Parameters[0]).ValueInt = PeriodCCI.ValueInt;
-            _CCI.Save();
-            _CCI.Reload();
+            ((IndicatorParameterInt)_Aroon.Parameters[0]).ValueInt = AroonLength.ValueInt;
+            _Aroon.Save();
+            _Aroon.Reload();
+
             ((IndicatorParameterInt)_Stoh.Parameters[0]).ValueInt = StochPeriod1.ValueInt;
             ((IndicatorParameterInt)_Stoh.Parameters[1]).ValueInt = StochPeriod2.ValueInt;
             ((IndicatorParameterInt)_Stoh.Parameters[2]).ValueInt = StochPeriod3.ValueInt;
@@ -128,16 +105,16 @@ namespace OsEngine.Robots.AO
             _Stoh.Reload();
         }
 
-        // The name of the robot in OsEngine
         public override string GetNameStrategyType()
         {
-            return "TraderStohAndCCI";
+            return "ContrtrendStochAndAroon";
         }
+
         public override void ShowIndividualSettingsDialog()
-        {
-
+        {            
         }
 
+        // Logic
         // Candle Finished Event
         private void _tab_CandleFinishedEvent(List<Candle> candles)
         {
@@ -149,7 +126,7 @@ namespace OsEngine.Robots.AO
 
             // If there are not enough candles to build an indicator, we exit
             if (candles.Count < StochPeriod1.ValueInt ||
-                candles.Count < PeriodCCI.ValueInt ||
+                candles.Count < AroonLength.ValueInt ||
                 candles.Count < StochPeriod2.ValueInt ||
                 candles.Count < StochPeriod3.ValueInt)
             {
@@ -187,28 +164,25 @@ namespace OsEngine.Robots.AO
         private void LogicOpenPosition(List<Candle> candles)
         {
             // The last value of the indicator
-            _lastCCI = _CCI.DataSeries[0].Last;
-            _lastStoh = _Stoh.DataSeries[0].Last;
+            decimal aroonUp = _Aroon.DataSeries[0].Last;
+            decimal aroonDown = _Aroon.DataSeries[1].Last;
+            decimal stoch = _Stoh.DataSeries[0].Last;
 
             // The prev value of the indicator
-            _prevCCI = _CCI.DataSeries[0].Values[_CCI.DataSeries[0].Values.Count - 2];
-            _prevStoh = _Stoh.DataSeries[0].Values[_Stoh.DataSeries[0].Values.Count - 2];
+            decimal prevStoh = _Stoh.DataSeries[0].Values[_Stoh.DataSeries[0].Values.Count - 2];
 
             List<Position> openPositions = _tab.PositionsOpenAll;
 
             if (openPositions == null || openPositions.Count == 0)
             {
-                List<decimal> values = _Stoh.DataSeries[0].Values;
-
                 decimal lastPrice = candles[candles.Count - 1].Close;
-
                 // Slippage
                 decimal _slippage = Slippage.ValueDecimal * _tab.Securiti.PriceStep;
 
                 // Long
                 if (Regime.ValueString != "OnlyShort") // If the mode is not only short, then we enter long
                 {
-                    if (_lastCCI > _prevCCI && -100 < _lastCCI && _lastCCI < 100 && _prevStoh < 20 && _lastStoh > 20)
+                    if (aroonUp > 70 && stoch > 30 && prevStoh < 30)
                     {
                         _tab.BuyAtLimit(GetVolume(), lastPrice + _slippage);
                     }
@@ -217,8 +191,7 @@ namespace OsEngine.Robots.AO
                 // Short
                 if (Regime.ValueString != "OnlyLong") // If the mode is not only long, then we enter short
                 {
-
-                    if (_lastCCI < _prevCCI && -100 < _lastCCI && _lastCCI < 100 && _prevStoh > 80 && _lastStoh < 80)
+                    if (aroonDown > 70 && stoch < 80 && prevStoh > 80)
                     {
                         _tab.SellAtLimit(GetVolume(), lastPrice - _slippage);
                     }
@@ -232,11 +205,11 @@ namespace OsEngine.Robots.AO
             List<Position> openPositions = _tab.PositionsOpenAll;
             Position pos = openPositions[0];
 
-            decimal stopPrice;
-
-            decimal _slippage = Slippage.ValueDecimal * _tab.Securiti.PriceStep;
-
+            // The prev value of the indicator
+            decimal aroonUp = _Aroon.DataSeries[0].Last;
+            decimal aroonDown = _Aroon.DataSeries[1].Last;
             decimal lastPrice = candles[candles.Count - 1].Close;
+            decimal _slippage = _tab.Securiti.PriceStep * Slippage.ValueDecimal / 100;
 
             for (int i = 0; openPositions != null && i < openPositions.Count; i++)
             {
@@ -249,16 +222,18 @@ namespace OsEngine.Robots.AO
 
                 if (openPositions[i].Direction == Side.Buy) // If the direction of the position is purchase
                 {
-                    decimal lov = candles[candles.Count - 1].Low;
-                    stopPrice = lov - lov * TrailingValue.ValueDecimal / 100;
+                    if (aroonUp < 60)
+                    {
+                        _tab.CloseAtLimit(pos, lastPrice - _slippage, pos.OpenVolume);
+                    }
                 }
                 else // If the direction of the position is sale
                 {
-                    decimal high = candles[candles.Count - 1].High;
-                    stopPrice = high + high * TrailingValue.ValueDecimal / 100;
+                    if (aroonDown < 60)
+                    {
+                        _tab.CloseAtLimit(pos, lastPrice + _slippage, pos.OpenVolume);
+                    }
                 }
-                _tab.CloseAtTrailingStop(pos, stopPrice, stopPrice);
-
             }
         }
 
