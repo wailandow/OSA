@@ -288,16 +288,14 @@ __pycache__/
 # tools/**
 # !tools/packages.config
 /project/OsEngine/AddonsMy
+/project/OsEngine/bin/Debug/Custom/Indicators/Scripts/cExternal.cs
+/project/OsEngine/bin/Debug/Custom/Indicators/Scripts/HandyEmpty.cs
+/project/OsEngine/Robots/YaRobots
+/project/OsEngine/Robots/YaRobots_old
+/project/OsEngine/bin/Debug/DataMy
 /project/OsEngine/Indicators/SuperChannel.cs
-/project/OsEngine/Market/Servers/QSH/QshClient.cs
-/project/OsEngine/Market/Servers/QSH/QshServer.cs
-/project/OsEngine/Market/Servers/QSH/QshServerUi.xaml
-/project/OsEngine/Market/Servers/QSH/QScalp
-/project/OsEngine/bin/Debug/DataMy/sqlSelectToOsa.sql
 /project/OsEngine/Market/Servers/QSH
 /project/OsEngine/Robots/YaRobots
 /project/OsEngine/Robots/YaRobots_old
-/project/OsEngine/bin/Debug/Custom/Indicators/Scripts/cExternal.cs
-/project/OsEngine/bin/Debug/Custom/Indicators/Scripts/HandyEmpty.cs
 /project/OsEngine/bin/Debug/OsEngine.exe
 /project/OsEngine/OsEngine.csproj
