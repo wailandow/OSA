@@ -176,9 +176,8 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reflection.TypeExtensions, Version=4.1.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization">
       <Private>True</Private>
@@ -1309,6 +1308,20 @@
     <Compile Include="Robots\Patterns\ThreeSoldier.cs" />
     <Compile Include="Robots\MarketMaker\TwoLegArbitrage.cs" />
     <Compile Include="Robots\CounterTrend\WilliamsRangeTrade.cs" />
+    <Compile Include="Robots\YaRobots\MachineVision.cs" />
+    <Compile Include="Robots\YaRobots\MoexIssBot.cs" />
+    <Compile Include="Robots\YaRobots\NakedVwap.cs" />
+    <Compile Include="Robots\YaRobots\PostgreSqlMOEX2.cs" />
+    <Compile Include="Robots\YaRobots\SaxBot.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerBetMrkt.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerHpat.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerHpatHour.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerHpatResearch.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerVolumer.cs" />
+    <Compile Include="Robots\YaRobots\ScreenerVWAP.cs" />
+    <Compile Include="Robots\YaRobots\SqliteBot.cs" />
+    <Compile Include="Robots\YaRobots\SqliteBotRepo.cs" />
+    <Compile Include="Robots\YaRobots\SqliteIMOEX2.cs" />
     <Page Include="Alerts\AlertMessageFullUi.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
