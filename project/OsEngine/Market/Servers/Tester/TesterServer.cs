@@ -13,10 +13,8 @@ using OsEngine.Entity;
 using OsEngine.Language;
 using OsEngine.Logging;
 using OsEngine.Market.Connectors;
-using OsEngine.Market.Servers.Bitfinex.BitfitnexEntity;
 using OsEngine.OsTrader.Panels;
 using OsEngine.OsTrader.Panels.Tab;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace OsEngine.Market.Servers.Tester
 {
@@ -128,6 +126,26 @@ namespace OsEngine.Market.Servers.Tester
             _ui = null;
         }
 
+        public bool RemoveTradesFromMemory
+        {
+            get
+            {
+                return _removeTradesFromMemory;
+            }
+            set
+            {
+                if (value == _removeTradesFromMemory)
+                {
+                    return;
+                }
+
+                _removeTradesFromMemory = value;
+                Save();
+            }
+        }
+        private bool _removeTradesFromMemory;
+
+
         /// <summary>
 		/// data type that the tester orders
         /// тип данных которые заказывает тестер
@@ -180,6 +198,7 @@ namespace OsEngine.Market.Servers.Tester
                     Enum.TryParse(reader.ReadLine(), out _orderExecutionType);
                     _profitMarketIsOn = Convert.ToBoolean(reader.ReadLine());
                     _guiIsOpenFullSettings = Convert.ToBoolean(reader.ReadLine());
+                    _removeTradesFromMemory = Convert.ToBoolean(reader.ReadLine());
                     reader.Close();
                 }
             }
@@ -209,7 +228,7 @@ namespace OsEngine.Market.Servers.Tester
                     writer.WriteLine(_orderExecutionType);
                     writer.WriteLine(_profitMarketIsOn);
                     writer.WriteLine(_guiIsOpenFullSettings);
-
+                    writer.WriteLine(_removeTradesFromMemory);
                     writer.Close();
                 }
             }
@@ -351,105 +370,121 @@ namespace OsEngine.Market.Servers.Tester
         /// </summary>
         public void TestingStart()
         {
-            if (_lastStartSecurityTime.AddSeconds(5) > DateTime.Now)
+            try
             {
-                SendLogMessage(OsLocalization.Market.Message97, LogMessageType.Error);
-                return;
-            }
 
-            TesterRegime = TesterRegime.Pause;
-            Thread.Sleep(200);
-            _serverTime = DateTime.MinValue;
-
-            ServerMaster.ClearOrders();
-
-            SendLogMessage(OsLocalization.Market.Message35, LogMessageType.System);
-
-
-            if(_isFirstStart == false)
-            {
-                if (_candleSeriesTesterActivate != null)
+                if (_lastStartSecurityTime.AddSeconds(5) > DateTime.Now)
                 {
-                    for (int i = 0; i < _candleSeriesTesterActivate.Count; i++)
+                    SendLogMessage(OsLocalization.Market.Message97, LogMessageType.Error);
+                    return;
+                }
+
+                TesterRegime = TesterRegime.Pause;
+                Thread.Sleep(200);
+                _serverTime = DateTime.MinValue;
+
+                ServerMaster.ClearOrders();
+
+                SendLogMessage(OsLocalization.Market.Message35, LogMessageType.System);
+
+
+                if (_isFirstStart == false)
+                {
+                    if (_candleSeriesTesterActivate != null)
                     {
-                        _candleSeriesTesterActivate[i].Clear();
+                        for (int i = 0; i < _candleSeriesTesterActivate.Count; i++)
+                        {
+                            _candleSeriesTesterActivate[i].Clear();
+                        }
+                    }
+
+                    _candleSeriesTesterActivate = new List<SecurityTester>();
+
+                    int countSeriesInLastTest = _candleManager.ActiveSeriesCount;
+
+                    _candleManager.Clear();
+
+                    if (NeadToReconnectEvent != null)
+                    {
+                        NeadToReconnectEvent();
+                    }
+
+                    int timeToWaitConnect = 100 + countSeriesInLastTest * 40;
+
+                    if (timeToWaitConnect > 10000)
+                    {
+                        timeToWaitConnect = 10000;
+                    }
+
+                    if (timeToWaitConnect < 1000)
+                    {
+                        timeToWaitConnect = 1000;
+                    }
+
+                    Thread.Sleep(timeToWaitConnect);
+                }
+
+                _allTrades = null;
+
+                if (TimeStart == DateTime.MinValue)
+                {
+                    SendLogMessage(OsLocalization.Market.Message47, LogMessageType.System);
+                    return;
+                }
+
+                TimeNow = TimeStart;
+
+                while (TimeNow.Minute != 0)
+                {
+                    TimeNow = TimeNow.AddMinutes(-1);
+                }
+
+                while (TimeNow.Second != 0)
+                {
+                    TimeNow = TimeNow.AddSeconds(-1);
+                }
+
+                while (TimeNow.Millisecond != 0)
+                {
+                    TimeNow = TimeNow.AddMilliseconds(-1);
+                }
+
+                if (_portfolios != null && _portfolios.Count != 0)
+                {
+                    _portfolios[0].ValueCurrent = StartPortfolio;
+                    _portfolios[0].ValueBegin = StartPortfolio;
+                    _portfolios[0].ValueBlocked = 0;
+                    _portfolios[0].ClearPositionOnBoard();
+                }
+
+                ProfitArray = new List<decimal>();
+
+                _dataIsActive = false;
+
+                OrdersActiv.Clear();
+
+                Thread.Sleep(2000);
+
+                TesterRegime = TesterRegime.Play;
+
+                if (TestingStartEvent != null)
+                {
+                    try
+                    {
+                        TestingStartEvent();
+                    }
+                    catch(Exception ex)
+                    {
+                        SendLogMessage(ex.ToString(), LogMessageType.Error);
                     }
                 }
 
-                _candleSeriesTesterActivate = new List<SecurityTester>();
-
-                int countSeriesInLastTest = _candleManager.ActiveSeriesCount;
-
-                _candleManager.Clear();
-
-                if (NeadToReconnectEvent != null)
-                {
-                    NeadToReconnectEvent();
-                }
-
-                int timeToWaitConnect = 100 + countSeriesInLastTest * 40;
-
-                if (timeToWaitConnect > 10000)
-                {
-                    timeToWaitConnect = 10000;
-                }
-
-                if(timeToWaitConnect < 1000)
-                {
-                    timeToWaitConnect = 1000;
-                }
-
-                Thread.Sleep(timeToWaitConnect);
+                _isFirstStart = false;
             }
-
-            _allTrades = null;
-
-            if (TimeStart == DateTime.MinValue)
+            catch (Exception ex)
             {
-                SendLogMessage(OsLocalization.Market.Message47, LogMessageType.System);
-                return;
+                SendLogMessage(ex.ToString(),LogMessageType.Error);
             }
-
-            TimeNow = TimeStart;
-
-            while (TimeNow.Minute != 0)
-            {
-                TimeNow = TimeNow.AddMinutes(-1);
-            }
-
-            while (TimeNow.Second != 0)
-            {
-                TimeNow = TimeNow.AddSeconds(-1);
-            }
-
-            while (TimeNow.Millisecond != 0)
-            {
-                TimeNow = TimeNow.AddMilliseconds(-1);
-            }
-
-            if (_portfolios != null && _portfolios.Count != 0)
-            {
-                _portfolios[0].ValueCurrent = StartPortfolio;
-                _portfolios[0].ValueBegin = StartPortfolio;
-                _portfolios[0].ValueBlocked = 0;
-                _portfolios[0].ClearPositionOnBoard();
-            }
-
-            ProfitArray = new List<decimal>();
-
-            _dataIsActive = false;
-
-            OrdersActiv.Clear();
-
-            Thread.Sleep(2000);
-
-            TesterRegime = TesterRegime.Play;
-
-            if (TestingStartEvent != null)
-            {
-                TestingStartEvent();
-            }
-            _isFirstStart = false;
         }
 
         private bool _isFirstStart = true;
@@ -1231,6 +1266,7 @@ namespace OsEngine.Market.Servers.Tester
                 security[security.Count - 1].NewTradesEvent += TesterServer_NewTradesEvent;
                 security[security.Count - 1].NewMarketDepthEvent += TesterServer_NewMarketDepthEvent;
                 security[security.Count - 1].LogMessageEvent += TesterServer_LogMessageEvent;
+                security[security.Count - 1].NeedToCheckOrders += TesterServer_NeedToCheckOrders;
 
                 string name = files[i].Split('\\')[files[i].Split('\\').Length - 1];
 
@@ -1563,6 +1599,7 @@ namespace OsEngine.Market.Servers.Tester
                 security[security.Count - 1].NewTradesEvent += TesterServer_NewTradesEvent;
                 security[security.Count - 1].NewMarketDepthEvent += TesterServer_NewMarketDepthEvent;
                 security[security.Count - 1].LogMessageEvent += TesterServer_LogMessageEvent;
+                security[security.Count - 1].NeedToCheckOrders += TesterServer_NeedToCheckOrders;
 
                 string name = files[i].Split('\\')[files[i].Split('\\').Length - 1];
 
@@ -1806,6 +1843,7 @@ namespace OsEngine.Market.Servers.Tester
                 security[security.Count - 1].NewTradesEvent += TesterServer_NewTradesEvent;
                 security[security.Count - 1].LogMessageEvent += TesterServer_LogMessageEvent;
                 security[security.Count - 1].NewMarketDepthEvent += TesterServer_NewMarketDepthEvent;
+                security[security.Count - 1].NeedToCheckOrders += TesterServer_NeedToCheckOrders;
 
                 string name = files[i].Split('\\')[files[i].Split('\\').Length - 1];
 
@@ -2049,6 +2087,11 @@ namespace OsEngine.Market.Servers.Tester
             }
         }
 
+        private void TesterServer_NeedToCheckOrders()
+        {
+            CheckOrders();
+        }
+
         // получить истинный TimeFrameSpan
         // get true TimeFrameSpan
         private TimeSpan GetTimeSpan(StreamReader reader)
@@ -2179,15 +2222,10 @@ namespace OsEngine.Market.Servers.Tester
 
             for (int i = 0; i < OrdersActiv.Count; i++)
             {
-
                 Order order = OrdersActiv[i];
                 // check availability of securities on the market / проверяем наличие инструмента на рынке
-                SecurityTester security =
-                    _candleSeriesTesterActivate.Find(
-                        tester =>
-                            tester.Security.Name == order.SecurityNameCode &&
-                            (tester.LastCandle != null || tester.LastTradeSeries != null ||
-                             tester.LastMarketDepth != null));
+
+                SecurityTester security = GetMySecurity(order);
 
                 if (security == null)
                 {
@@ -2293,6 +2331,16 @@ namespace OsEngine.Market.Servers.Tester
                 }
 
                 ExecuteOnBoardOrder(order, realPrice, time, slipage);
+
+                for (int i = 0; i < OrdersActiv.Count; i++)
+                {
+                    if (OrdersActiv[i].NumberUser == order.NumberUser)
+                    {
+                        OrdersActiv.RemoveAt(i);
+                        break;
+                    }
+                }
+
                 return true;
             }
 
@@ -2491,12 +2539,22 @@ namespace OsEngine.Market.Servers.Tester
                 decimal realPrice = order.Price;
 
                 ExecuteOnBoardOrder(order, realPrice, lastTrade.Time, slipage);
+
+                for (int i = 0; i < OrdersActiv.Count; i++)
+                {
+                    if (OrdersActiv[i].NumberUser == order.NumberUser)
+                    {
+                        OrdersActiv.RemoveAt(i);
+                        break;
+                    }
+                }
+
                 return true;
             }
 
             if (order.TypeOrder == OrderPriceType.Market)
             {
-                if (order.TimeCreate >= lastTrade.Time)
+                if (order.TimeCreate > lastTrade.Time)
                 {
                     return false;
                 }
@@ -2647,6 +2705,29 @@ namespace OsEngine.Market.Servers.Tester
             {
                 //CanselOnBoardOrder(order);
                 return false;
+            }
+
+            if (order.IsStopOrProfit)
+            {
+                int slipage = 0;
+                if (_slipageToStopOrder > 0)
+                {
+                    slipage = _slipageToStopOrder;
+                }
+                decimal realPrice = order.Price;
+
+                ExecuteOnBoardOrder(order, realPrice, time, slipage);
+
+                for (int i = 0; i < OrdersActiv.Count; i++)
+                {
+                    if (OrdersActiv[i].NumberUser == order.NumberUser)
+                    {
+                        OrdersActiv.RemoveAt(i);
+                        break;
+                    }
+                }
+
+                return true;
             }
 
             if (order.TypeOrder == OrderPriceType.Market)
@@ -3409,7 +3490,8 @@ namespace OsEngine.Market.Servers.Tester
                     if (_candleSeriesTesterActivate.Find(tester => tester.Security.Name == securityName &&
                                                                    tester.DataType == SecurityTesterDataType.Tick) == null)
                     {
-                        if (SecuritiesTester.Find(tester => tester.Security.Name == securityName &&
+                        if (SecuritiesTester != null &&
+                            SecuritiesTester.Find(tester => tester.Security.Name == securityName &&
                                                             tester.DataType == SecurityTesterDataType.Tick) != null)
                         {
                             _candleSeriesTesterActivate.Add(
@@ -3429,7 +3511,8 @@ namespace OsEngine.Market.Servers.Tester
                     if (_candleSeriesTesterActivate.Find(tester => tester.Security.Name == securityName &&
                                                                    tester.DataType == SecurityTesterDataType.MarketDepth) == null)
                     {
-                        if (SecuritiesTester.Find(tester => tester.Security.Name == securityName &&
+                        if (SecuritiesTester != null 
+                            && SecuritiesTester.Find(tester => tester.Security.Name == securityName &&
                                                             tester.DataType == SecurityTesterDataType.MarketDepth) != null)
                         {
                             _candleSeriesTesterActivate.Add(
@@ -3449,9 +3532,10 @@ namespace OsEngine.Market.Servers.Tester
                                                                    tester.DataType == SecurityTesterDataType.Candle &&
                                                                    tester.TimeFrameSpan == time) == null)
                     {
-                        if (SecuritiesTester.Find(tester => tester.Security.Name == securityName &&
+                        if (SecuritiesTester == null ||
+                            (SecuritiesTester.Find(tester => tester.Security.Name == securityName &&
                                                             tester.DataType == SecurityTesterDataType.Candle &&
-                                                            tester.TimeFrameSpan == time) == null)
+                                                            tester.TimeFrameSpan == time) == null))
                         {
                             return null;
                         }
@@ -3642,7 +3726,7 @@ namespace OsEngine.Market.Servers.Tester
             {
                 timeFrame = TimeFrame.Hour2;
             }
-            else if (frameSpan == new TimeSpan(24, 0, 0, 0) )
+            else if (frameSpan == new TimeSpan(1, 0, 0, 0) )
             {
                 timeFrame = TimeFrame.Day;
             }
@@ -3766,7 +3850,8 @@ namespace OsEngine.Market.Servers.Tester
                    for (int i = 0; i < _allTrades.Length; i++)
                    {
                        if (_allTrades[i] != null && _allTrades[i].Count != 0 &&
-                           _allTrades[i][0].SecurityNameCode == trade.SecurityNameCode)
+                           _allTrades[i][0].SecurityNameCode == trade.SecurityNameCode &&
+                           _allTrades[i][0].TimeFrameInTester == trade.TimeFrameInTester)
                        { // if there is already a storage for this instrument, save it/ если для этого инструметна уже есть хранилище, сохраняем и всё
                            isSave = true;
                            if (_allTrades[i][0].Time > trade.Time)
@@ -3812,16 +3897,25 @@ namespace OsEngine.Market.Servers.Tester
 
             if (NewTradeEvent != null)
             {
-                foreach (var trades in _allTrades)
+                for (int i = 0; i < _allTrades.Length; i++)
                 {
-                    if (tradesNew[0].SecurityNameCode == trades[0].SecurityNameCode)
+                    List<Trade> trades = _allTrades[i];
+
+                    if (tradesNew[0].SecurityNameCode == trades[0].SecurityNameCode
+                        && tradesNew[0].TimeFrameInTester == trades[0].TimeFrameInTester)
                     {
+                        if (_removeTradesFromMemory
+                            && trades.Count > 1000)
+                        {
+                            _allTrades[i] = _allTrades[i].GetRange(trades.Count - 1000, 1000);
+                            trades = _allTrades[i];
+                        }
+
                         NewTradeEvent(trades);
                         break;
                     }
                 }
             }
-
             if (NewBidAscIncomeEvent != null)
             {
                 NewBidAscIncomeEvent(tradesNew[tradesNew.Count - 1].Price, tradesNew[tradesNew.Count - 1].Price, GetSecurityForName(tradesNew[tradesNew.Count - 1].SecurityNameCode,""));
@@ -3985,6 +4079,7 @@ namespace OsEngine.Market.Servers.Tester
             orderOnBoard.Comment = order.Comment;
             orderOnBoard.LifeTime = order.LifeTime;
             orderOnBoard.IsStopOrProfit = order.IsStopOrProfit;
+            orderOnBoard.TimeFrameInTester = order.TimeFrameInTester;
 
             OrdersActiv.Add(orderOnBoard);
 
@@ -4010,7 +4105,8 @@ namespace OsEngine.Market.Servers.Tester
 
             if (orderOnBoard.IsStopOrProfit)
             {
-                SecurityTester security = _candleSeriesTesterActivate.Find(tester => tester.Security.Name == order.SecurityNameCode);
+                SecurityTester security = GetMySecurity(order);
+
                 if (security.DataType == SecurityTesterDataType.Candle)
                 { // testing with using candles / прогон на свечках
                     if (CheckOrdersInCandleTest(orderOnBoard, security.LastCandle))
@@ -4019,13 +4115,56 @@ namespace OsEngine.Market.Servers.Tester
                     }
                 }
                 else if (security.DataType == SecurityTesterDataType.Tick)
-                { // testing with using candles / прогон на свечках
+                { 
                     if (CheckOrdersInTickTest(orderOnBoard, security.LastTrade, true))
                     {
                         OrdersActiv.Remove(orderOnBoard);
                     }
                 }
             }
+        }
+
+        private SecurityTester GetMySecurity(Order order)
+        {
+            SecurityTester security = null;
+
+            if(TypeTesterData == TesterDataType.Candle)
+            {
+                for(int i = 0;i < _candleSeriesTesterActivate.Count;i++)
+                {
+                    if (_candleSeriesTesterActivate[i].Security.Name == order.SecurityNameCode 
+                        && _candleSeriesTesterActivate[i].TimeFrame == order.TimeFrameInTester)
+                    {
+                        security = _candleSeriesTesterActivate[i];
+                        break;
+                    }
+                }
+
+                if(security == null)
+                {
+                    security =
+                         _candleSeriesTesterActivate.Find(
+                             tester =>
+                                 tester.Security.Name == order.SecurityNameCode
+                                 &&
+                                 (tester.LastCandle != null
+                                 || tester.LastTradeSeries != null
+                                 || tester.LastMarketDepth != null));
+                }
+            }
+            else
+            {
+                security =
+                     _candleSeriesTesterActivate.Find(
+                         tester =>
+                             tester.Security.Name == order.SecurityNameCode
+                             &&
+                             (tester.LastCandle != null
+                             || tester.LastTradeSeries != null
+                             || tester.LastMarketDepth != null));
+            }
+
+            return security;
         }
 
         /// <summary>
@@ -4037,7 +4176,6 @@ namespace OsEngine.Market.Servers.Tester
         {
 
         }
-
 
         /// <summary>
 		/// cancel order from the exchange
@@ -4388,7 +4526,7 @@ namespace OsEngine.Market.Servers.Tester
                 return;
             }
 
-            if(now.Month == 4 &&
+            if (now.Month == 4 &&
                 now.Day > 4)
             {
 
@@ -4435,7 +4573,7 @@ namespace OsEngine.Market.Servers.Tester
                 _lastString = _reader.ReadLine();
                 Trade tradeN = new Trade() { SecurityNameCode = Security.Name };
                 tradeN.SetTradeFromString(_lastString);
-                
+
                 if (tradeN.Time.AddMilliseconds(-tradeN.Time.Millisecond) <= now)
                 {
                     lastTradesSeries.Add(tradeN);
@@ -4449,10 +4587,13 @@ namespace OsEngine.Market.Servers.Tester
 
             LastTradeSeries = lastTradesSeries;
 
-            if (NewTradesEvent != null)
+            for (int i = 0; i < lastTradesSeries.Count; i++)
             {
-                NewTradesEvent(lastTradesSeries);
+                List<Trade> trades = new List<Trade>() { lastTradesSeries[i] };
+                NewTradesEvent(trades);
+                NeedToCheckOrders();
             }
+
         }
 
 // parsing candle files
@@ -4497,10 +4638,39 @@ namespace OsEngine.Market.Servers.Tester
             {
                 List<Trade> lastTradesSeries = new List<Trade>();
 
-                lastTradesSeries.Add(new Trade() { Price = LastCandle.Open, Volume = 1, Side = Side.Sell, Time = LastCandle.TimeStart, SecurityNameCode = Security.Name });
-                lastTradesSeries.Add(new Trade() { Price = LastCandle.High, Volume = 1, Side = Side.Buy, Time = LastCandle.TimeStart, SecurityNameCode = Security.Name });
-                lastTradesSeries.Add(new Trade() { Price = LastCandle.Low, Volume = 1, Side = Side.Sell, Time = LastCandle.TimeStart, SecurityNameCode = Security.Name });
-                lastTradesSeries.Add(new Trade() { Price = LastCandle.Close, Volume = 1, Side = Side.Sell, Time = LastCandle.TimeStart, SecurityNameCode = Security.Name });
+                lastTradesSeries.Add(new Trade() { 
+                    Price = LastCandle.Open, 
+                    Volume = 1, 
+                    Side = Side.Sell, 
+                    Time = LastCandle.TimeStart, 
+                    SecurityNameCode = Security.Name,
+                    TimeFrameInTester = TimeFrame
+                });
+
+                lastTradesSeries.Add(new Trade() { 
+                    Price = LastCandle.High, Volume = 1, 
+                    Side = Side.Buy, 
+                    Time = LastCandle.TimeStart, 
+                    SecurityNameCode = Security.Name,
+                    TimeFrameInTester = TimeFrame
+                });
+
+                lastTradesSeries.Add(new Trade() { 
+                    Price = LastCandle.Low, 
+                    Volume = 1, Side = Side.Sell, 
+                    Time = LastCandle.TimeStart, 
+                    SecurityNameCode = Security.Name,
+                    TimeFrameInTester = TimeFrame
+                });
+
+                lastTradesSeries.Add(new Trade() { 
+                    Price = LastCandle.Close, 
+                    Volume = 1, 
+                    Side = Side.Sell, 
+                    Time = LastCandle.TimeStart, 
+                    SecurityNameCode = Security.Name,
+                    TimeFrameInTester = TimeFrame
+                });
 
                 if (NewTradesEvent != null)
                 {
@@ -4528,10 +4698,41 @@ namespace OsEngine.Market.Servers.Tester
             {
                 List<Trade> lastTradesSeries = new List<Trade>();
 
-                lastTradesSeries.Add(new Trade() { Price = LastCandle.Open, Volume = 1, Side = Side.Sell, Time = LastCandle.TimeStart, SecurityNameCode = Security.Name });
-                lastTradesSeries.Add(new Trade() { Price = LastCandle.High, Volume = 1, Side = Side.Buy, Time = LastCandle.TimeStart, SecurityNameCode = Security.Name });
-                lastTradesSeries.Add(new Trade() { Price = LastCandle.Low, Volume = 1, Side = Side.Sell, Time = LastCandle.TimeStart, SecurityNameCode = Security.Name });
-                lastTradesSeries.Add(new Trade() { Price = LastCandle.Close, Volume = 1, Side = Side.Sell, Time = LastCandle.TimeStart, SecurityNameCode = Security.Name });
+                lastTradesSeries.Add(new Trade() { 
+                    Price = LastCandle.Open, 
+                    Volume = 1, 
+                    Side = Side.Sell, 
+                    Time = LastCandle.TimeStart, 
+                    SecurityNameCode = Security.Name,
+                    TimeFrameInTester = TimeFrame
+                });
+
+                lastTradesSeries.Add(new Trade() { 
+                    Price = LastCandle.High, 
+                    Volume = 1, 
+                    Side = Side.Buy, 
+                    Time = LastCandle.TimeStart, 
+                    SecurityNameCode = Security.Name,
+                    TimeFrameInTester = TimeFrame
+                });
+
+                lastTradesSeries.Add(new Trade() { 
+                    Price = LastCandle.Low, 
+                    Volume = 1, 
+                    Side = Side.Sell, 
+                    Time = LastCandle.TimeStart, 
+                    SecurityNameCode = Security.Name,
+                    TimeFrameInTester = TimeFrame
+                });
+
+                lastTradesSeries.Add(new Trade() { 
+                    Price = LastCandle.Close, 
+                    Volume = 1, 
+                    Side = Side.Sell, 
+                    Time = LastCandle.TimeStart, 
+                    SecurityNameCode = Security.Name,
+                    TimeFrameInTester = TimeFrame
+                });
 
                 if (NewTradesEvent != null)
                 {
@@ -4551,6 +4752,8 @@ namespace OsEngine.Market.Servers.Tester
         /// новые тики появились
         /// </summary>
         public event Action<List<Trade>> NewTradesEvent;
+
+        public event Action NeedToCheckOrders;
 
         /// <summary>
 		/// new candles appeared

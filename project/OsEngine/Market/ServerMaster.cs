@@ -33,9 +33,6 @@ using OsEngine.Market.Servers.Tester;
 using OsEngine.Market.Servers.Transaq;
 using OsEngine.Market.Servers.ZB;
 using OsEngine.Market.Servers.Hitbtc;
-using OsEngine.Market.Servers.Huobi.Futures;
-using OsEngine.Market.Servers.Huobi.Spot;
-using OsEngine.Market.Servers.Huobi.FuturesSwap;
 using OsEngine.Market.Servers.MFD;
 using OsEngine.Market.Servers.MOEX;
 using OsEngine.Market.Servers.TinkoffInvestments;
@@ -59,6 +56,10 @@ using OsEngine.Market.Servers.Pionex;
 using OsEngine.Market.Servers.Woo;
 using OsEngine.Market.Servers.MoexAlgopack;
 using OsEngine.Market.Servers.HTX.Spot;
+using OsEngine.Market.Servers.HTX.Futures;
+using OsEngine.Market.Servers.HTX.Swap;
+using OsEngine.Market.Servers.MoexFixFastSpot;
+using OsEngine.Market.Servers.BitMart;
 
 namespace OsEngine.Market
 {
@@ -186,8 +187,8 @@ namespace OsEngine.Market
                 serverTypes.Add(ServerType.Zb);
                 serverTypes.Add(ServerType.Hitbtc);
                 serverTypes.Add(ServerType.HTXSpot);
-                serverTypes.Add(ServerType.HuobiFutures);
-                serverTypes.Add(ServerType.HuobiFuturesSwap);
+                serverTypes.Add(ServerType.HTXFutures);
+                serverTypes.Add(ServerType.HTXSwap);
                 serverTypes.Add(ServerType.Bybit);
                 serverTypes.Add(ServerType.OKX);
                 serverTypes.Add(ServerType.Bitmax_AscendexFutures);
@@ -199,10 +200,11 @@ namespace OsEngine.Market
                 serverTypes.Add(ServerType.PionexSpot);
                 serverTypes.Add(ServerType.Woo);
                 serverTypes.Add(ServerType.MoexAlgopack);
+                serverTypes.Add(ServerType.MoexFixFastSpot);
                 serverTypes.Add(ServerType.InteractiveBrokers);
                 serverTypes.Add(ServerType.NinjaTrader);
                 serverTypes.Add(ServerType.Lmax);
-                
+                serverTypes.Add(ServerType.BitMart);
 
                 serverTypes.Add(ServerType.AstsBridge);
 
@@ -286,6 +288,7 @@ namespace OsEngine.Market
                 serverTypes.Add(ServerType.MoexDataServer);
                 serverTypes.Add(ServerType.MfdWeb);
                 serverTypes.Add(ServerType.MoexAlgopack);
+                serverTypes.Add(ServerType.MoexFixFastSpot);
                 serverTypes.Add(ServerType.AscendEx_BitMax);
                 serverTypes.Add(ServerType.Binance);
                 serverTypes.Add(ServerType.BinanceFutures);
@@ -295,13 +298,12 @@ namespace OsEngine.Market
                 serverTypes.Add(ServerType.Bitfinex);
                 serverTypes.Add(ServerType.Kraken);
                 serverTypes.Add(ServerType.Exmo);
-                serverTypes.Add(ServerType.HuobiSpot);
-                serverTypes.Add(ServerType.HuobiFutures);
-                serverTypes.Add(ServerType.HuobiFuturesSwap);
+                serverTypes.Add(ServerType.HTXSpot);
+                serverTypes.Add(ServerType.HTXFutures);
+                serverTypes.Add(ServerType.HTXSwap);
                 serverTypes.Add(ServerType.Bybit);
                 serverTypes.Add(ServerType.OKX);
                 serverTypes.Add(ServerType.Woo);
-                serverTypes.Add(ServerType.HTXSpot);
 
                 return serverTypes;
             }
@@ -390,6 +392,10 @@ namespace OsEngine.Market
                 {
                     newServer = new MoexAlgopackServer();
                 }
+                if (type == ServerType.MoexFixFastSpot)
+                {
+                    newServer = new MoexFixFastSpotServer();
+                }
                 if (type == ServerType.XTSpot)
                 {
                     newServer = new XTServerSpot();
@@ -425,18 +431,6 @@ namespace OsEngine.Market
                 if (type == ServerType.OKX)
                 {
                     newServer = new OkxServer();
-                }
-                if (type == ServerType.HuobiFuturesSwap)
-                {
-                    newServer = new HuobiFuturesSwapServer();
-                }
-                if (type == ServerType.HuobiFutures)
-                {
-                    newServer = new HuobiFuturesServer();
-                }
-                if (type == ServerType.HuobiSpot)
-                {
-                    newServer = new HuobiSpotServer();
                 }
                 if (type == ServerType.MfdWeb)
                 {
@@ -492,7 +486,7 @@ namespace OsEngine.Market
                 }
                 if (type == ServerType.Binance)
                 {
-                    newServer = new BinanceServer();
+                    newServer = new BinanceServerSpot();
                 }
                 if (type == ServerType.BinanceFutures)
                 {
@@ -557,6 +551,18 @@ namespace OsEngine.Market
                 else if (type == ServerType.HTXSpot)
                 {
                     newServer = new HTXSpotServer();
+                }
+                else if (type == ServerType.HTXFutures)
+                {
+                    newServer = new HTXFuturesServer();
+                }
+                else if (type == ServerType.HTXSwap)
+                {
+                    newServer = new HTXSwapServer();
+                }
+                else if (type == ServerType.BitMart)
+                {
+                    newServer = new BitMartServer();
                 }
 
                 if (newServer == null)
@@ -862,32 +868,39 @@ namespace OsEngine.Market
 
             while (true)
             {
-                await Task.Delay(5000);
-
-                if (!MainWindow.ProccesIsWorked)
+                try
                 {
-                    return;
-                }
+                    await Task.Delay(5000);
 
-                if (NeadToConnectAuto == false)
-                {
-                    continue;
-                }
+                    if (!MainWindow.ProccesIsWorked)
+                    {
+                        return;
+                    }
 
-                if (_tryActivateServerTypes == null)
-                {
-                    _tryActivateServerTypes = new List<ServerType>();
-                }
-
-                for (int i = 0; _needServerTypes != null && i < _needServerTypes.Count; i++)
-                {
-                    if (_needServerTypes[i] == ServerType.Tester ||
-                        _needServerTypes[i] == ServerType.Optimizer ||
-                        _needServerTypes[i] == ServerType.Miner)
+                    if (NeadToConnectAuto == false)
                     {
                         continue;
                     }
-                    TryStartThisSevrverInAutoType(_needServerTypes[i]);
+
+                    if (_tryActivateServerTypes == null)
+                    {
+                        _tryActivateServerTypes = new List<ServerType>();
+                    }
+
+                    for (int i = 0; _needServerTypes != null && i < _needServerTypes.Count; i++)
+                    {
+                        if (_needServerTypes[i] == ServerType.Tester ||
+                            _needServerTypes[i] == ServerType.Optimizer ||
+                            _needServerTypes[i] == ServerType.Miner)
+                        {
+                            continue;
+                        }
+                        TryStartThisServerInAutoType(_needServerTypes[i]);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    SendNewLogMessage(ex.ToString(),LogMessageType.Error);
                 }
             }
         }
@@ -895,40 +908,47 @@ namespace OsEngine.Market
         /// <summary>
         /// try running this server
         /// </summary>
-        private static void TryStartThisSevrverInAutoType(ServerType type)
+        private static void TryStartThisServerInAutoType(ServerType type)
         {
-            for (int i = 0; i < _tryActivateServerTypes.Count; i++)
+            try
             {
-                if (_tryActivateServerTypes[i] == type)
+                for (int i = 0; i < _tryActivateServerTypes.Count; i++)
+                {
+                    if (_tryActivateServerTypes[i] == type)
+                    {
+                        return;
+                    }
+                }
+
+                _tryActivateServerTypes.Add(type);
+
+                if (GetServers() == null || GetServers().Find(server1 => server1.ServerType == type) == null)
+                { // if we don't have our server, create a new one / если у нас нашего сервера нет - создаём его
+                    CreateServer(type, true);
+                }
+
+                List<IServer> servers = GetServers();
+
+                if (servers == null)
+                { // something went wrong / что-то пошло не так
+                    return;
+                }
+
+                IServer server = servers.Find(server1 => server1.ServerType == type);
+
+                if (server == null)
                 {
                     return;
                 }
+
+                if (server.ServerStatus != ServerConnectStatus.Connect)
+                {
+                    server.StartServer();
+                }
             }
-
-            _tryActivateServerTypes.Add(type);
-
-            if (GetServers() == null || GetServers().Find(server1 => server1.ServerType == type) == null)
-            { // if we don't have our server, create a new one / если у нас нашего сервера нет - создаём его
-                CreateServer(type, true);
-            }
-
-            List<IServer> servers = GetServers();
-
-            if (servers == null)
-            { // something went wrong / что-то пошло не так
-                return;
-            }
-
-            IServer server = servers.Find(server1 => server1.ServerType == type);
-
-            if (server == null)
+            catch (Exception ex)
             {
-                return;
-            }
-
-            if (server.ServerStatus != ServerConnectStatus.Connect)
-            {
-                server.StartServer();
+                SendNewLogMessage(ex.ToString(),LogMessageType.Error);
             }
         }
 
@@ -1004,6 +1024,10 @@ namespace OsEngine.Market
                 {
                     serverPermission = new MoexAlgopackServerPermission();
                 }
+                else if (type == ServerType.MoexFixFastSpot)
+                {
+                    serverPermission = new MoexFixFastSpotServerPermission();
+                }
                 else if (type == ServerType.XTSpot)
                 {
                     serverPermission = new XTSpotServerPermission();
@@ -1072,18 +1096,6 @@ namespace OsEngine.Market
                 {
                     serverPermission = new TinkoffInvestmentsServerPermission();
                 }
-                else if (type == ServerType.HuobiSpot)
-                {
-                    serverPermission = new HuobiSpotServerPermission();
-                }
-                else if (type == ServerType.HuobiFutures)
-                {
-                    serverPermission = new HuobiFuturesServerPermission();
-                }
-                else if (type == ServerType.HuobiFuturesSwap)
-                {
-                    serverPermission = new HuobiFuturesSwapServerPermission();
-                }
                 else if (type == ServerType.GateIoFutures)
                 {
                     serverPermission = new GateIoServerFuturesPermission();
@@ -1115,6 +1127,22 @@ namespace OsEngine.Market
                 else if (type == ServerType.HTXSpot)
                 {
                     serverPermission = new HTXSpotServerPermission();
+                }
+                else if (type == ServerType.HTXFutures)
+                {
+                    serverPermission = new HTXFuturesServerPermission();
+                }
+                else if (type == ServerType.HTXSwap)
+                {
+                    serverPermission = new HTXSwapServerPermission();
+                }
+                else if (type == ServerType.Plaza)
+                {
+                    serverPermission = new PlazaServerPermission();
+                }
+                else if (type == ServerType.BitMart)
+                {
+                    serverPermission = new BitMartServerPermission();
                 }
 
                 if (serverPermission != null)
@@ -1453,21 +1481,6 @@ namespace OsEngine.Market
         MfdWeb,
 
         /// <summary>
-        /// Huobi Spot
-        /// </summary>
-        HuobiSpot,
-
-        /// <summary>
-        /// Huobi Futures
-        /// </summary>
-        HuobiFutures,
-
-        /// <summary>
-        /// Huobi Futures Swap
-        /// </summary>
-        HuobiFuturesSwap,
-
-        /// <summary>
         /// Bybit exchange
         /// </summary>
         Bybit,
@@ -1546,5 +1559,24 @@ namespace OsEngine.Market
         /// HTXSpot exchange
         /// </summary>
         HTXSpot,
+
+        /// <summary>
+        /// HTXFutures exchange
+        /// </summary>
+        HTXFutures,
+
+        /// <summary>
+        /// HTXSwap exchange
+        /// </summary>
+        HTXSwap,
+
+        /// <summary>
+        /// FIX/FAST for MOEX Spot
+        /// </summary>
+        MoexFixFastSpot,
+
+        /// BitMart exchange
+        /// </summary>
+        BitMart,
     }
 }

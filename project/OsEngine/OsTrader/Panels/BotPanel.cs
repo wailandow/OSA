@@ -122,6 +122,11 @@ namespace OsEngine.OsTrader.Panels
         public string FileName;
 
         /// <summary>
+        /// the name the user wants to see in the interface
+        /// </summary>
+        public string PublicName;
+
+        /// <summary>
         /// the program that launched the robot. Tester  Robot  Optimizer
         /// </summary>
         public StartProgram StartProgram;
@@ -210,6 +215,29 @@ namespace OsEngine.OsTrader.Panels
         }
 
         public BotPanelChartUi _chartUi;
+
+        public void CloseGui()
+        {
+            try
+            {
+                if (_chartUi == null)
+                {
+                    return;
+                }
+
+                if (_chartUi.Dispatcher.CheckAccess() == false)
+                {
+                    _chartUi.Dispatcher.Invoke(CloseGui);
+                    return;
+                }
+
+                _chartUi.Close();
+            }
+            catch (Exception ex)
+            {
+                SendNewLogMessage(ex.ToString(),LogMessageType.Error);
+            }
+        }
 
         void _chartUi_Closed(object sender, EventArgs e)
         {
@@ -440,6 +468,18 @@ namespace OsEngine.OsTrader.Panels
         {
             try
             {
+                try
+                {
+                    if (_chartUi != null)
+                    {
+                        _chartUi.Close();
+                    }
+                }
+                catch
+                {
+                    // ignore
+                }
+
                 OsTraderMaster.CriticalErrorEvent -= OsTraderMaster_CriticalErrorEvent;
 
                 if (_riskManager != null)
@@ -537,7 +577,14 @@ namespace OsEngine.OsTrader.Panels
 
                 if (DeleteEvent != null)
                 {
-                    DeleteEvent();
+                    try
+                    {
+                        DeleteEvent();
+                    }
+                    catch(Exception ex)
+                    {
+                        SendNewLogMessage(ex.ToString(), LogMessageType.Error);
+                    }
                 }
             }
             catch (Exception error)
@@ -1131,9 +1178,16 @@ position => position.State != PositionStateType.OpeningFail
                 SaveParametrs();
             }
 
-            if (ParametrsChangeByUser != null)
+            try
             {
-                ParametrsChangeByUser();
+                if (ParametrsChangeByUser != null)
+                {
+                    ParametrsChangeByUser();
+                }
+            }
+            catch (Exception error)
+            {
+                SendNewLogMessage(error.ToString(), LogMessageType.Error);
             }
         }
 
