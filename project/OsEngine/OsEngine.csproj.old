@@ -1,0 +1,451 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <PlatformTarget>x64</PlatformTarget>
+    <ApplicationIcon>OsLogo.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <AssemblyVersion>2.0.1.4</AssemblyVersion>
+    <FileVersion>2.0.1.4</FileVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+   <OutputPath>bin\Debug\</OutputPath>
+   <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+   <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+   <Optimize>False</Optimize>
+   <DebugType>full</DebugType>
+   <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+   <OutputPath>bin\Release\</OutputPath>
+   <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+   <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+   <DebugType>full</DebugType>
+   <Optimize>False</Optimize>
+   <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <Target Name="RemoveSatelliteAssemblies" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+        <ReferenceCopyLocalPaths Remove="@(ReferenceSatellitePaths)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="FilterPublishSatelliteResources" AfterTargets="RunResolvePublishAssemblies" Condition="'$(SatelliteResourceLanguages)' != ''">
+
+    <ItemGroup>
+      <PublishSatelliteResources Include="@(ResolvedAssembliesToPublish)" Condition="'%(ResolvedAssembliesToPublish.AssetType)' == 'resources'" />
+    </ItemGroup>
+
+    <JoinItems Left="@(PublishSatelliteResources)" LeftKey="Culture" LeftMetadata="*" Right="$(SatelliteResourceLanguages)" RightKey="" RightMetadata="" ItemSpecToUse="Left">
+      <Output TaskParameter="JoinResult" ItemName="FilteredPublishSatelliteResources" />
+    </JoinItems>
+
+    <ItemGroup Condition="'@(PublishSatelliteResources)' != ''">
+      <ResolvedAssembliesToPublish Remove="@(PublishSatelliteResources)" />
+      <ResolvedAssembliesToPublish Include="@(FilteredPublishSatelliteResources)" />
+    </ItemGroup>
+  </Target>
+  <ItemGroup>
+    <Compile Remove="lua\**" />
+    <Compile Remove="Robots\YaRobots_old\**" />
+    <EmbeddedResource Remove="lua\**" />
+    <EmbeddedResource Remove="Robots\YaRobots_old\**" />
+    <None Remove="lua\**" />
+    <None Remove="Robots\YaRobots_old\**" />
+    <Page Remove="lua\**" />
+    <Page Remove="Robots\YaRobots_old\**" />
+    <PackageReference Include="Google.Api.CommonProtos" Version="2.16.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3240.44" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.31.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="9.0.5" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.16" />
+    <PackageReference Include="System.Threading.Channels" Version="9.0.16" />
+    <PackageReference Include="System.ServiceModel.Federation" Version="8.1.2" />
+    <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
+    <PackageReference Include="WTelegramClient" Version="4.3.4" />
+    <PackageReference Include="CoreWCF.Primitives" Version="1.9.0" />
+    <PackageReference Include="CoreWCF.ConfigurationManager" Version="1.9.0" />
+    <PackageReference Include="CoreWCF.Http" Version="1.9.0" />
+    <PackageReference Include="CoreWCF.WebHttp" Version="1.9.0" />
+    <PackageReference Include="CoreWCF.NetTcp" Version="1.9.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Robots\DataTransferObjects.cs" />
+    <Compile Remove="Robots\OptionsDataCollector.cs" />
+    <Compile Remove="Robots\YaRobots\ScreenerVWAP_bak.cs" />
+    <Compile Remove="Robots\YaRobots\ScreenerVWAP_bak_1701.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="BytesRoad.Net.Ftp">
+      <HintPath>bin\Debug\BytesRoad.Net.Ftp.dll</HintPath>
+    </Reference>
+    <Reference Include="BytesRoad.Net.Sockets">
+      <HintPath>bin\Debug\BytesRoad.Net.Sockets.dll</HintPath>
+    </Reference>
+    <Reference Include="cgate_net64">
+      <HintPath>bin\Debug\cgate_net64.dll</HintPath>
+    </Reference>
+    <Reference Include="FinamApi">
+      <HintPath>bin\Debug\FinamApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Jayrock.Json">
+      <HintPath>bin\Debug\Jayrock.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="LiteDB, Version=5.0.19.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\LiteDB.dll</HintPath>
+    </Reference>
+    <Reference Include="MtApi5">
+      <HintPath>bin\Debug\MtApi5.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MathNet.Numerics, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.5.0.0\lib\net48\MathNet.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.HashCode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.HashCode.1.1.1\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="MtClient">
+      <HintPath>bin\Debug\MtClient.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Npgsql, Version=8.0.3.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Npgsql.8.0.3\lib\netstandard2.0\Npgsql.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=4.0.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.4.1.0\lib\net462\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework.legacy, Version=4.0.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.4.1.0\lib\net462\nunit.framework.legacy.dll</HintPath>
+    </Reference>
+    <Reference Include="NSec.Cryptography">
+      <HintPath>bin\Debug\NSec.Cryptography.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenFAST">
+      <HintPath>bin\Debug\OpenFAST.dll</HintPath>
+    </Reference>
+    <Reference Include="QUIKSharp">
+      <HintPath>bin\Debug\QuikSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>bin\Debug\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.ClientEngine">
+      <HintPath>bin\Debug\SuperSocket.ClientEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="TInvestApi">
+      <HintPath>bin\Debug\TInvestApi.dll</HintPath>
+    </Reference>
+    <Reference Include="WebSocket4Net">
+      <HintPath>bin\Debug\WebSocket4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.8.0.0\lib\net462\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.SQLite, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.118.0\lib\net46\System.Data.SQLite.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.118.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.118.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.8.0.0\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reflection.TypeExtensions, Version=4.1.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <Private>True</Private>
+    </Reference>
+    <Reference Update="System.Runtime.Serialization">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Text.Encoding.CodePages, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.4.7.0\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Channels, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Channels.8.0.0\lib\net462\System.Threading.Channels.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.8.0.0\lib\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="TinkoffInvestApi">
+      <HintPath>..\..\related projects\TinkoffInvestmentsApi\bin\Debug\TinkoffInvestApi.dll</HintPath>
+    </Reference>
+    <Reference Include="websocket-sharp, Version=1.0.2.32519, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Vendors\websocket-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="WebSocket4Net, Version=0.14.1.0, Culture=neutral, PublicKeyToken=eb4e154b696bf72a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Vendors\WebSocket4Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <Content Include="bin\$(Configuration)\libcrypto-3-x64.dll">
+      <Link>libcrypto-3-x64.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="bin\$(Configuration)\libssl-3-x64.dll">
+      <Link>libssl-3-x64.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="bin\Debug\libcrypto-3-x64.dll" />
+    <Content Remove="bin\Debug\libssl-3-x64.dll" />
+    <Content Remove="bin\Release\libcrypto-3-x64.dll" />
+    <Content Remove="bin\Release\libssl-3-x64.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="lua\config.json" />
+    <None Include="lua\dkjson.lua" />
+    <None Include="lua\qscallbacks.lua" />
+    <None Include="lua\qsfunctions.lua" />
+    <None Include="lua\qsutils.lua" />
+    <None Include="lua\QuikSharp.lua" />
+    <None Include="lua\Quik_2.lua" />
+    <None Include="lua\socket.lua" />
+    <None Include="lua\USAGE.RU.md" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\clr.bat" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console-x86.exe.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console.exe.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-x86.exe.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.exe.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\NUnitTests.config" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\NUnitTests.nunit" />
+    <None Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\runFile.exe.config" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+    <None Remove="Images\InstructionPosts\GreenPost.png" />
+    <None Remove="Images\InstructionPosts\GreenPostCollection.png" />
+    <None Remove="Images\InstructionPosts\WhitePost.png" />
+    <None Remove="Images\InstructionPosts\WhitePostCollection.png" />
+    <None Remove="Images\MainWIndow\flag_eng.png" />
+    <None Remove="Images\MainWIndow\flag_ru.png" />
+    <None Remove="Images\MainWIndow\tbank.mp4" />
+    <None Remove="Images\RestartBenchmark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\InstructionPosts\GreenPost.png" />
+    <Resource Include="Images\InstructionPosts\GreenPostCollection.png" />
+    <Resource Include="Images\InstructionPosts\WhitePost.png" />
+    <Resource Include="Images\InstructionPosts\WhitePostCollection.png" />
+    <Resource Include="Images\MainWIndow\flag_eng.png" />
+    <Resource Include="Images\MainWIndow\flag_ru.png" />
+    <Resource Include="Images\OsLogo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 и x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>Клиентский профиль .NET Framework 3.5 с пакетом обновления 1 %28SP1%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\MainWIndow\test.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\MainWIndow\data.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\MainWIndow\Trading.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pickDownSize1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pickDownSize4.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pickUpSize1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pickUpSize4.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pickDownSize2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pickDownSize3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pickUpSize2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\pickUpSize3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\MainWIndow\gear.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\padlockClosed.png" />
+    <Resource Include="Images\padlockOpened.png" />
+    <Resource Include="Images\eye.png" />
+    <Resource Include="Images\eyeBig.png" />
+    <Content Include="Images\MainWIndow\tbank.mp4">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\generateButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\OsEngine_logo_transpared.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\RestartBenchmark.png" />
+    <Resource Include="Images\Support\No.png" />
+    <Resource Include="Images\Support\Prime.png" />
+    <Resource Include="Images\Support\Standart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="OsLogo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\" />
+    <Folder Include="bin\Release\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\Failure.jpg" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\fit.dll" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\Ignored.jpg" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\mock-assembly.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nonamespace-assembly.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\notestfixtures-assembly.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console-runner.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console-x86.exe" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console.exe" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-console.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-gui-runner.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-gui.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit-x86.exe" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.core.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.core.extensions.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.core.interfaces.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.core.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.exe" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.extensions.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.fixtures.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.fixtures.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.framework.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.framework.extensions.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.framework.tests.dll" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.framework.xml" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.mocks.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.mocks.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.uikit.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.uikit.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.util.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\nunit.util.tests.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\NUnitFitTests.html" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\runFile.exe" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\Success.jpg" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\test-assembly.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\test-utilities.dll" />
+    <Content Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\bin\timing-tests.dll" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\fit-license.txt" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\license.txt" />
+    <Resource Include="AddonsMy\SX\NUnit-2.4.3-net-2.0\Logo.ico" />
+  </ItemGroup>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.118.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
